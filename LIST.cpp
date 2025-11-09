@@ -8,42 +8,35 @@
 int main()
 {
     list_t list = {0, 0, 0, 0};
-    func_check(list_creator(&list))
-    size_t graph_number = 0;
-
-    func_check(create_graph(&graph_number, list));
-
-    func_check(insert_after(&list, 0, 5));
-    func_check(create_graph(&graph_number, list));
-
-    func_check(insert_after(&list, 1, 10));
-    func_check(create_graph(&graph_number, list));
-
-    func_check(insert_after(&list, 2, 15));
-    func_check(create_graph(&graph_number, list));
-
-    func_check(insert_after(&list, 3, 20));
-    func_check(create_graph(&graph_number, list));
-
-    func_check(delete_after(&list, 0));
-    func_check(create_graph(&graph_number, list));
     
-    List_DUMP(&list, graph_number);
-    func_check(list_destructor(&list))
+    size_t graph_namber = 0;
+    printf("FIRST\n");
+    func_check(list_creator(&list))
+    printf("SECOND\n");
+
+    func_check(insert_after(&list, 0, 5))
+    func_check(insert_after(&list, 1, 6))
+
+    List_DUMP(&list, graph_namber);
+    list_destructor(&list);
     return 0;
 }   
 
 
 ARR_errors list_creator(list_t* list)
 {
+    printf("START CREATING LIST\n");
+
     if (list == nullptr) 
         return no_valid_pointer_to_list;
+    
+    printf("GOOD LIST POINTER\n");
 
     list->capacity = LIST_SIZE;
     list->size = 0;
 
     list->array = (block_t*) calloc (list->capacity, sizeof(block_t));
-    
+    list->array->elem = CANARY;
     
     if (!list->array)
         return no_valid_pointer_to_list;
@@ -61,21 +54,48 @@ ARR_errors list_creator(list_t* list)
     return OK;
 }
 
-ARR_errors verificator(block_t* array)
+ARR_errors verificator(list_t* list)
 {
+    if (list == nullptr)
+        {
+        printf("NULLPOINTER TO LIST\n");
+        return no_valid_pointer_to_list;
+        }
+    
+    if (*get_elem(list, 0) != 1505007)
+        {
+            printf("CANARA IS DIED\n");
+            list->errors |= canary_is_died;
+        }
+    
+    if (list->size > list->capacity)
+        {
+            printf("SIZE IS MORE CAPACITY\n");
+        list->errors |= size_more_capacity;
+        }
+    
+    if (list->free == 0)
+        {
+            printf("NO FREE BLOCKS\n");
+            list->errors |= no_free_block;
+        }
+
+    if (list->errors != 0)
+        return ERROR;
+    
     return OK;
 }
 
 ARR_errors insert_after(list_t* list, size_t index, arr_value new_elem)
 {
-    if (list == nullptr)
-        return no_valid_pointer_to_list; 
+    if (verificator(list) != OK)
+        return ERROR;
 
-    else if(index >= list->capacity)
-        return no_valid_index;    
+    // else if (index >= list->capacity)
+    //     return no_valid_index;    
     
-    else if (*get_prev(list, index) == -1)
-        return insert_after_free;
+    // else if (*get_prev(list, index) == -1)
+    //     return insert_after_free;
     
 
     size_t new_free = *get_next(list, list->free);    
@@ -86,6 +106,7 @@ ARR_errors insert_after(list_t* list, size_t index, arr_value new_elem)
         list_extension(list);
         new_free = *get_next(list, list->free);
     }
+
     *get_prev(list, list->free) = (ssize_t)index;
     *get_next(list, list->free) = *get_next(list, index);
     *get_elem(list, list->free) = new_elem;
@@ -104,15 +125,20 @@ ARR_errors insert_after(list_t* list, size_t index, arr_value new_elem)
 
 ARR_errors delete_after(list_t* list, size_t index)
 {
-    if (list == nullptr)
-        return no_valid_pointer_to_list;
+    if (verificator(list) != OK)
+        return ERROR;
 
     else if (index == (size_t)*get_tail(list))
+    {
+        list->errors |= delete_after_tail;
         return delete_after_tail;
-    
-    else if(*get_prev(list, index) == -1)
-        return delete_after_free;
+    }
 
+    else if(*get_prev(list, index) == -1)
+    {
+        list->errors |= delete_after_free;
+        return delete_after_free;
+    }
     
     size_t delete_index = *get_next(list, index);
 
@@ -124,7 +150,7 @@ ARR_errors delete_after(list_t* list, size_t index)
 
     *get_next(list, delete_index) = list->free;
     list->free = delete_index;
-    
+    list->size--;
 
     return OK;
 }
@@ -161,6 +187,21 @@ ARR_errors list_extension(list_t* list)
 
 // ARR_errors delete_before(list_t* list, size_t index)
 // {
+//     if (verificator(list) != OK)
+//         return ERROR;
+
+//     if (*get_head(list) == index)
+//     {
+//         list->errors |= delete_before_head;
+//         return delete_before_head;
+//     }   
+
+//     else if (*get_prev(list, index) == -1)
+//     {
+//         list->errors |= delete_before_free;
+//         return delete_before_free;
+//     } 
+
     
 // }
 
@@ -169,6 +210,8 @@ void List_DUMP(list_t* list, size_t file_number)
     printf(BOLD_MAGENTA);
     
     printf("pointer to List is %p", list);
+
+
 
     printf(RESET);
 
@@ -184,6 +227,7 @@ void create_html(size_t file_number)
                        "<head>\n"
                        "    <title>List Dump</title>\n"
                        "</head>\n"
+                       "<pre>\n"
                        "<body>\n");
     
                        
@@ -191,10 +235,11 @@ void create_html(size_t file_number)
     {
         char path[70] = {};
         sprintf(path, "/mnt/c/Users/boris/projects/Array/photo/graph%lu.png", i);    
-        fprintf(fp, "<img src=\" %s \"alt=\"Описание изображения\">\n", path);
+        fprintf(fp, "<img src=\" %s \">\n\n\n", path);
     }
 
     fprintf(fp, "</body>\n"
+                "</pre>"
                 "</html>\n");
     fclose(fp);
 }

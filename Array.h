@@ -7,9 +7,9 @@
 #include <string.h>
 #include "../common/DEBUG.h"
 #include "../common/COLORS.h"
-
 typedef int arr_value;
 
+#define CANARY 1505007;
 
 
 enum ARR_errors 
@@ -24,8 +24,10 @@ enum ARR_errors
     no_valid_index = 64,
     insert_after_free = 128,
     delete_after_free = 256,
-
-
+    canary_is_died = 512,
+    size_more_capacity = 1024,
+    delete_before_head = 2048,
+    delete_before_free = 4096,
 };
 
 
@@ -36,12 +38,13 @@ enum ARR_errors
 
     
 #define func_check(func)                        \
+            \
     if (func != OK)                             \
         {                                       \
-            /*verificator(array)*/              \
+            List_DUMP(&list, graph_namber);     \
             return ERROR;                       \
         }                                       \
-
+    create_graph(&graph_namber, list);  
 
 struct block_t
 {
@@ -56,18 +59,19 @@ struct list_t
     size_t free;
     size_t size;
     size_t capacity;
+    size_t errors;
 };
 
 
 
 #define POISON 666 //поменяю потом
-#define LIST_SIZE 3
+#define LIST_SIZE 10
 
 ARR_errors list_creator(list_t* arr);
-ARR_errors verificator(block_t* array);
+ARR_errors verificator(list_t* array);
 ARR_errors insert_after(list_t* arr, size_t index, arr_value new_elem);
 ARR_errors delete_after(list_t* arr, size_t index);
-ARR_errors add_to_begin(list_t* arr, arr_value new_elem);
+//ARR_errors add_to_begin(list_t* arr, arr_value new_elem);
 ARR_errors list_destructor(list_t* arr);
 ARR_errors list_extension(list_t* arr);
 void create_html(size_t file_number);

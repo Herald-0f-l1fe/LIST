@@ -1,24 +1,37 @@
 digraph G {
 rankdir=LR
-0 [shape=Mrecord, label ="  index = 0 | elem = 0 | next = 2 | prev = 4   "];
-0->2[color="blue"];
-0->4[color="green"]
-1 [shape=Mrecord, label ="  index = 1 | elem = 5 | next = 5 | prev = -1   ",style=filled, fillcolor=green];
-1->5[color="blue"];
-2 [shape=Mrecord, label ="  index = 2 | elem = 10 | next = 3 | prev = 0   "];
-2->3[color="blue"];
-2->0[color="green"]
-3 [shape=Mrecord, label ="  index = 3 | elem = 15 | next = 4 | prev = 2   "];
+splines=ortho
+node [style=filled, fillcolor=red, fontcolor=white, shape=octagon]
+0 [shape=Mrecord, label ="index = 0 | elem = 1505007 | next = 1 | prev = 2", style=filled, fontcolor="black", fillcolor=white];
+0->1[color="blue"];
+0->2[color="green"]
+1 [shape=Mrecord, label ="index = 1 | elem = 5 | next = 2 | prev = 0", style=filled, fontcolor="black", fillcolor=white];
+1->2[color="blue"];
+1->0[color="green"]
+2 [shape=Mrecord, label ="index = 2 | elem = 6 | next = 0 | prev = 1", style=filled, fontcolor="black", fillcolor=white];
+2->0[color="blue"];
+2->1[color="green"]
+3 [shape=Mrecord, label ="index = 3 | elem = 666 | next = 4 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
 3->4[color="blue"];
-3->2[color="green"]
-4 [shape=Mrecord, label ="  index = 4 | elem = 20 | next = 0 | prev = 3   "];
-4->0[color="blue"];
-4->3[color="green"]
-5 [shape=Mrecord, label ="  index = 5 | elem = 666 | next = 0 | prev = -1   ",style=filled, fillcolor=green];
-5->0[color="blue"];
+4 [shape=Mrecord, label ="index = 4 | elem = 666 | next = 5 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+4->5[color="blue"];
+5 [shape=Mrecord, label ="index = 5 | elem = 666 | next = 6 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+5->6[color="blue"];
+6 [shape=Mrecord, label ="index = 6 | elem = 666 | next = 7 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+6->7[color="blue"];
+7 [shape=Mrecord, label ="index = 7 | elem = 666 | next = 8 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+7->8[color="blue"];
+8 [shape=Mrecord, label ="index = 8 | elem = 666 | next = 9 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+8->9[color="blue"];
+9 [shape=Mrecord, label ="index = 9 | elem = 666 | next = 0 | prev = -1", style=filled, fontcolor="black", fillcolor=green];
+9->0[color="blue"];
 0->1[color="lightcyan" weight=5000]
 1->2[color="lightcyan" weight=5000]
 2->3[color="lightcyan" weight=5000]
 3->4[color="lightcyan" weight=5000]
 4->5[color="lightcyan" weight=5000]
+5->6[color="lightcyan" weight=5000]
+6->7[color="lightcyan" weight=5000]
+7->8[color="lightcyan" weight=5000]
+8->9[color="lightcyan" weight=5000]
 }

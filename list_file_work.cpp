@@ -11,8 +11,11 @@ FILE* open_file()
 ARR_errors create_file(FILE* fp, list_t arr)
 {
     assert(fp);
-    fprintf(fp, "digraph G {\n");
-    fprintf(fp, "rankdir=LR\n");
+    fprintf(fp, "digraph G {\n"
+                "rankdir=LR\n"
+                "splines=ortho\n"
+                "node [style=filled, fillcolor=red, fontcolor=white, shape=octagon]\n"
+            );
 
     char block[200] = {};
     char edge[200] = {};
@@ -33,16 +36,18 @@ ARR_errors create_file(FILE* fp, list_t arr)
 
 char* block_creater(block_t node, size_t node_number, char* block)
 {
-    sprintf(block, "%lu [shape=Mrecord, label =\"  index = %lu | elem = %d | next = %lu | prev = %ld   \"", node_number, node_number, node.elem, node.next, node.prev);
+    sprintf(block, "%lu [shape=Mrecord, label =\"index = %lu | elem = %d | next = %lu | prev = %ld\", style=filled, fontcolor=\"black\"", node_number, node_number, node.elem, node.next, node.prev);
     if (node.prev == -1)
-        strcat(block, ",style=filled, fillcolor=green");
+        strcat(block, ", fillcolor=green");
+    else 
+        strcat(block, ", fillcolor=white");
     strcat(block, "];\n");
     return block;
 }
 
 char* edge_create(block_t node, size_t index, char* edge)
 {
-    char prev_edge[30] = {};
+    char prev_edge[50] = {};
 
     sprintf(prev_edge, "%lu->%ld[color=\"green\"]\n", index, node.prev);
     sprintf(edge, "%lu->%lu[color=\"blue\"];\n", index, node.next);
